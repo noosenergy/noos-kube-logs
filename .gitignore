@@ -1,0 +1,11 @@
+# Shell
+.env
+
+# IDE
+.idea
+.vscode
+
+# MacOS
+.DS_Store
+.localized
+*~
