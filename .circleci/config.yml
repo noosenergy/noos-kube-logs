@@ -1,0 +1,76 @@
+---
+version: 2.1
+
+# ----------------
+# Orbs declaration
+# ----------------
+
+orbs:
+
+  noos-ci: noosenergy/noos-ci@0.1.11
+
+# --------------
+# Pipeline tasks
+# --------------
+
+jobs:
+
+  lint-chart:
+    executor: noos-ci/default
+    steps:
+      - checkout
+      - noos-ci/helm-lint-chart
+
+  build-chart:
+    executor: noos-ci/default
+    steps:
+      - checkout
+      - noos-ci/helm-build-chart
+
+  build-image:
+    executor: noos-ci/default
+    steps:
+      - checkout
+      - noos-ci/docker-build-image:
+          registry-provider: docker
+          image-context: ./docker
+          image-name: fluentd
+          image-tag: ${CIRCLE_SHA1}
+
+  deploy:
+    executor: noos-ci/default
+    steps:
+      - checkout
+      - noos-ci/terraform-run-plan:
+          workspace: noos-prod
+          plan-message: ${CIRCLE_BUILD_URL}
+
+# -----------------
+# Pipeline workflow
+# -----------------
+
+workflows:
+
+  lint-build-deploy:
+    jobs:
+      - lint-chart
+      - build-chart:
+          context: CIRCLECI_SHARED
+          requires:
+            - lint-chart
+          filters:
+            branches:
+              only: master
+      - build-image:
+          context: CIRCLECI_SHARED
+          filters:
+            branches:
+              only: master
+      # - deploy:
+      #     context: NOOS_PROD_SHARED
+      #     requires:
+      #       - build-chart
+      #       - build-image
+      #     filters:
+      #       branches:
+      #         only: master
