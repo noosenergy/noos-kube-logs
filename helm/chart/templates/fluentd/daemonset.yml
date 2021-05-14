@@ -1,0 +1,63 @@
+# https://github.com/fluent/fluentd-kubernetes-daemonset
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: fluentd-lb
+  template:
+    metadata:
+      labels:
+        app: fluentd-lb
+    spec:
+      # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
+      terminationGracePeriodSeconds: 30
+      {{- if .Values.fluentd.tolerations }}
+      tolerations:
+        {{- toYaml .Values.fluentd.tolerations | nindent 8 }}
+      {{- end }}
+
+      volumes:
+        - name: var-log
+          hostPath:
+            path: /var/log
+        - name: var-lib-docker-containers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: fluentd-config
+          configMap:
+            name: fluentd-config
+
+      containers:
+        - name: controller
+          image: "{{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}"
+          imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
+          env:
+            - name: FLUENTD_CONF
+              value: "fluentd.conf"
+          {{- if .Values.fluentd.env }}
+          envFrom:
+            - secretRef:
+                name: fluentd-dotenv
+          {{- end }}
+          ports:
+            - name: forward
+              containerPort: 24224
+            - name: http
+              containerPort: 9880
+          volumeMounts:
+            - name: var-log
+              mountPath: /var/log
+            - name: var-lib-docker-containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: fluentd-config
+              mountPath: /fluentd/etc/
+              readOnly: true
+          {{- if .Values.fluentd.resources }}
+          resources:
+            {{- toYaml .Values.fluentd.resources | nindent 12 }}
+          {{- end }}

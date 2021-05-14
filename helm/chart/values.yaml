@@ -1,0 +1,9 @@
+# https://github.com/fluent/fluentd-kubernetes-daemonset
+
+fluentd:
+  image:
+    repository: "noosenergy/fluentd"
+    tag: latest
+    pullPolicy: Always
+  resources: {}
+  env: {}

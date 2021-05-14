@@ -1,0 +1,11 @@
+# VCS
+.gitignore
+
+# IDE
+.idea
+.vscode
+
+# MacOS
+.DS_Store
+.localized
+*~
