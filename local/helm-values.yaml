@@ -1,0 +1,28 @@
+---
+fluentd:
+  image:
+    repository: "noosenergy/fluentd"
+    tag: latest
+    pullPolicy: Always
+  tolerations:
+    # Don't deploy onto the K8s master node
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    # Deploy on all other nodes
+    - key: neptune.internal/dedicated
+      operator: Equal
+      value: cpu
+      effect: NoSchedule
+    - key: neptune.internal/dedicated
+      operator: Equal
+      value: cpu-xl
+      effect: NoSchedule
+  env:
+    FLUENTD__SLACK_WEBHOOK_URL:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      memory: 500Mi
