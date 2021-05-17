@@ -1,26 +1,33 @@
 # https://hub.docker.com/r/fluent/fluentd/
-# https://github.com/fluent/fluentd-docker-image/blob/master/v0.12
-# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v0.12
+# https://github.com/fluent/fluentd-docker-image/tree/master/v1.12
+# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.12
 
-FROM fluent/fluentd:v1.12-1
+FROM fluent/fluentd:v1.12-debian
 
 USER root
 
-RUN set -ex \
-    && apk upgrade --no-cache \
-    && apk add --no-cache --virtual .build-deps \
-        build-base \
-        ruby-dev \
-        libffi-dev \
+# Install apt & gem dependencies
+# ------------------------------
+ARG APT_DEPS=" \
+    sudo make \
+    gcc g++ \
+    libc-dev \
+    libffi-dev \
+    net-tools \
+    "
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends $APT_DEPS \
     && gem install \
         fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-rewrite-tag-filter \
+        fluent-plugin-loggly \
         fluent-plugin-slack \
-    && apk del .build-deps \
     && gem sources --clear-all \
-    && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /usr/lib/ruby/gems/*/cache/*.gem
 
-USER fluent
+# TODO: open issue on reading `/var/log` as non-root
+# https://github.com/fluent/fluentd-kubernetes-daemonset/issues/548
+# USER fluent
 WORKDIR /home/fluent
-ENTRYPOINT ["tini",  "--", "/bin/entrypoint.sh"]
-CMD ["fluentd"]
