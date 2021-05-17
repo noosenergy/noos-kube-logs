@@ -41,6 +41,10 @@ jobs:
     executor: noos-ci/default
     steps:
       - checkout
+      - noos-ci/terraform-update-variable:
+          workspace: noos-prod
+          variable-name: kube_logs_exporter_image_tag
+          variable-value: ${CIRCLE_SHA1}
       - noos-ci/terraform-run-plan:
           workspace: noos-prod
           plan-message: ${CIRCLE_BUILD_URL}
@@ -66,11 +70,11 @@ workflows:
           filters:
             branches:
               only: master
-      # - deploy:
-      #     context: NOOS_PROD_SHARED
-      #     requires:
-      #       - build-chart
-      #       - build-image
-      #     filters:
-      #       branches:
-      #         only: master
+      - deploy:
+          context: NOOS_PROD_SHARED
+          requires:
+            - build-chart
+            - build-image
+          filters:
+            branches:
+              only: master

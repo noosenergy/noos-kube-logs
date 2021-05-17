@@ -1,9 +1,14 @@
 # https://github.com/fluent/fluentd-kubernetes-daemonset
 
+rbac:
+  enabled: false
+
 fluentd:
   image:
-    repository: "noosenergy/fluentd"
+    repository:
     tag: latest
     pullPolicy: Always
+  priorityClassName:
+  tolerations: []
   resources: {}
   env: {}
