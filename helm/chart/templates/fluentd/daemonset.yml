@@ -12,9 +12,18 @@ spec:
     metadata:
       labels:
         app: fluentd-lb
+      annotations:
+        # Trick to enforce Helm rolling update
+        strategyTrigger: {{ randAlphaNum 5 | quote }}
     spec:
       # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
       terminationGracePeriodSeconds: 30
+      {{- if .Values.fluentd.priorityClassName }}
+      priorityClassName: {{ .Values.fluentd.priorityClassName }}
+      {{- end }}
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: fluentd-exporter
+      {{- end }}
       {{- if .Values.fluentd.tolerations }}
       tolerations:
         {{- toYaml .Values.fluentd.tolerations | nindent 8 }}
@@ -32,10 +41,11 @@ spec:
             name: fluentd-config
 
       containers:
-        - name: controller
+        - name: exporter
           image: "{{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}"
           imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
           env:
+            # To mount Fluentd main config in Docker
             - name: FLUENTD_CONF
               value: "fluentd.conf"
           {{- if .Values.fluentd.env }}
