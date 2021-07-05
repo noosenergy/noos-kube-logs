@@ -30,15 +30,15 @@ spec:
       {{- end }}
 
       volumes:
-        - name: var-log
+        - name: host-volume
           hostPath:
             path: /var/log
-        - name: var-lib-docker-containers
+        - name: docker-volume
           hostPath:
             path: /var/lib/docker/containers
-        - name: fluentd-config
+        - name: exporter-volume
           configMap:
-            name: fluentd-config
+            name: exporter-config
 
       containers:
         - name: exporter
@@ -59,12 +59,12 @@ spec:
             - name: http
               containerPort: 9880
           volumeMounts:
-            - name: var-log
+            - name: host-volume
               mountPath: /var/log
-            - name: var-lib-docker-containers
+            - name: docker-volume
               mountPath: /var/lib/docker/containers
               readOnly: true
-            - name: fluentd-config
+            - name: exporter-volume
               mountPath: /fluentd/etc/
               readOnly: true
           {{- if .Values.fluentd.resources }}
