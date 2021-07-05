@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fluentd
+  name: fluentd-exporter
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
@@ -51,7 +51,7 @@ spec:
           {{- if .Values.fluentd.env }}
           envFrom:
             - secretRef:
-                name: fluentd-dotenv
+                name: exporter-dotenv
           {{- end }}
           ports:
             - name: forward
