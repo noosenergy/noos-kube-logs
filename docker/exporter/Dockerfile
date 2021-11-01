@@ -21,6 +21,7 @@ RUN apt-get update \
         fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-loggly \
+        fluent-plugin-sentry \
         fluent-plugin-slack \
     && gem sources --clear-all \
     && rm -rf \

@@ -4,4 +4,4 @@ metadata:
   name: exporter-config
   namespace: {{ .Release.Namespace }}
 data:
-  {{- tpl ((.Files.Glob "files/*.conf").AsConfig) . | nindent 2 }}
+  {{- (.Files.Glob "files/*.conf").AsConfig | nindent 2 }}
