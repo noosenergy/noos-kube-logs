@@ -18,15 +18,15 @@ spec:
     spec:
       # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
       terminationGracePeriodSeconds: 30
-      {{- if .Values.fluentd.priorityClassName }}
-      priorityClassName: {{ .Values.fluentd.priorityClassName }}
+      {{- if .Values.exporter.priorityClassName }}
+      priorityClassName: {{ .Values.exporter.priorityClassName }}
       {{- end }}
       {{- if .Values.rbac.enabled }}
       serviceAccountName: fluentd-exporter
       {{- end }}
-      {{- if .Values.fluentd.tolerations }}
+      {{- if .Values.exporter.tolerations }}
       tolerations:
-        {{- toYaml .Values.fluentd.tolerations | nindent 8 }}
+        {{- toYaml .Values.exporter.tolerations | nindent 8 }}
       {{- end }}
 
       volumes:
@@ -42,13 +42,13 @@ spec:
 
       containers:
         - name: exporter
-          image: "{{ .Values.fluentd.image.repository }}:{{ .Values.fluentd.image.tag }}"
-          imagePullPolicy: {{ .Values.fluentd.image.pullPolicy }}
+          image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
+          imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
           env:
             # To mount Fluentd main config in Docker
             - name: FLUENTD_CONF
               value: "fluentd.conf"
-          {{- if .Values.fluentd.env }}
+          {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:
                 name: exporter-dotenv
@@ -67,7 +67,7 @@ spec:
             - name: exporter-volume
               mountPath: /fluentd/etc/
               readOnly: true
-          {{- if .Values.fluentd.resources }}
+          {{- if .Values.exporter.resources }}
           resources:
-            {{- toYaml .Values.fluentd.resources | nindent 12 }}
+            {{- toYaml .Values.exporter.resources | nindent 12 }}
           {{- end }}
