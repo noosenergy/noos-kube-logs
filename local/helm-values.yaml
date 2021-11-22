@@ -19,6 +19,7 @@ exporter:
       effect: NoSchedule
   env:
     FLUENTD__LOGGLY_URL:
+    FLUENTD__SENTRY_URL:
     FLUENTD__SLACK_URL:
   resources:
     requests:
