@@ -3,7 +3,7 @@
 rbac:
   enabled: false
 
-fluentd:
+exporter:
   image:
     repository:
     tag: latest
