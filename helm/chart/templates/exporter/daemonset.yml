@@ -30,9 +30,12 @@ spec:
       {{- end }}
 
       volumes:
+        # Mount node entire log filesystem
         - name: host-volume
           hostPath:
             path: /var/log
+        # Mount actual docker container logs
+        # (symlinked to /var/log/containers)
         - name: docker-volume
           hostPath:
             path: /var/lib/docker/containers
