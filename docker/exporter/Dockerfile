@@ -1,8 +1,8 @@
 # https://hub.docker.com/r/fluent/fluentd/
-# https://github.com/fluent/fluentd-docker-image/tree/master/v1.12
-# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.12
+# https://github.com/fluent/fluentd-docker-image/tree/master/v1.15
+# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.15
 
-FROM fluent/fluentd:v1.12-debian
+FROM fluent/fluentd:v1.15-debian
 
 USER root
 
@@ -21,7 +21,6 @@ RUN apt-get update \
         fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-loggly \
-        fluent-plugin-sentry \
         fluent-plugin-slack \
     && gem sources --clear-all \
     && rm -rf \
