@@ -7,7 +7,7 @@ version: 2.1
 
 orbs:
 
-  noos-ci: noosenergy/noos-ci@0.1.14
+  noos-ci: noosenergy/noos-ci@0.1.15
 
 # --------------
 # Pipeline tasks
@@ -25,7 +25,9 @@ jobs:
     executor: noos-ci/default
     steps:
       - checkout
-      - noos-ci/helm-build-chart
+      - noos-ci/helm-build-chart:
+          registry-provider: aws
+          chart-name: noos-prod/kube-logs
 
   build-image:
     executor: noos-ci/default
