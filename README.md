@@ -1,7 +1,7 @@
-[![CircleCI](https://circleci.com/gh/noosenergy/neptune-kube-logs.svg?style=svg&circle-token=8658731bfa70cd9619d715b982fc3f4684760beb)](https://circleci.com/gh/noosenergy/neptune-kube-logs)
+[![CircleCI](https://circleci.com/gh/noosenergy/noos-kube-logs.svg?style=svg&circle-token=8658731bfa70cd9619d715b982fc3f4684760beb)](https://circleci.com/gh/noosenergy/noos-kube-logs)
 
-# Neptune Kube Logs
-Logs monitoring boilerplate for the Neptune platform.
+# Noos Kube Logs
+Logs monitoring boilerplate for the Noos platform.
 
 This project regroups quite a few ideas gathered along blogs, threads, repositories and other documentations. To give back to the community, Noos Energy open-sourced the deployment of such a service to help other developpers to jump-start building their cloud-native infrastructure.
 
