@@ -6,20 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: fluentd-exporter
-  namespace: {{ .Release.Namespace }}
-rules:
-  - apiGroups: [""]
-    resources: ["pods", "namespaces"]
-    verbs: ["get", "list", "watch"]
----
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: fluentd-exporter
-  namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
     name: fluentd-exporter
@@ -28,4 +17,13 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: fluentd-exporter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluentd-exporter
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "namespaces"]
+    verbs: ["get", "list", "watch"]
 {{- end }}
