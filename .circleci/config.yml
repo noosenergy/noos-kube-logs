@@ -1,6 +1,13 @@
 ---
 version: 2.1
 
+default:
+  filter: &filter-master-only
+    filters:
+      branches:
+        only: master
+
+
 # ----------------
 # Orbs declaration
 # ----------------
@@ -8,6 +15,7 @@ version: 2.1
 orbs:
 
   noos-ci: noosenergy/noos-ci@0.1.15
+
 
 # --------------
 # Pipeline tasks
@@ -51,6 +59,7 @@ jobs:
           workspace: noos-prod
           plan-message: ${CIRCLE_BUILD_URL}
 
+
 # -----------------
 # Pipeline workflow
 # -----------------
@@ -62,28 +71,20 @@ workflows:
       - lint-chart
       - hold:
           type: approval
-          filters:
-            branches:
-              only: master
+          <<: *filter-master-only
       - build-chart:
           context: CIRCLECI_SHARED
           requires:
             - hold
-          filters:
-            branches:
-              only: master
+          <<: *filter-master-only
       - build-image:
           context: DOCKERHUB_SHARED
           requires:
             - hold
-          filters:
-            branches:
-              only: master
+          <<: *filter-master-only
       - deploy:
           context: NOOS_PROD_SHARED
           requires:
             - build-chart
             - build-image
-          filters:
-            branches:
-              only: master
+          <<: *filter-master-only
