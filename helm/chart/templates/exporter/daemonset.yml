@@ -48,6 +48,10 @@ spec:
           image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
           env:
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
             # To mount Fluentd main config in Docker
             - name: FLUENTD_CONF
               value: "fluentd.conf"
