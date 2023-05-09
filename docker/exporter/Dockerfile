@@ -2,7 +2,7 @@
 # https://github.com/fluent/fluentd-docker-image/tree/master/v1.15
 # https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.15
 
-FROM fluent/fluentd:v1.15-debian
+FROM fluent/fluentd:v1.16-debian
 
 USER root
 
@@ -19,6 +19,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends $APT_DEPS \
     && gem install \
         fluent-plugin-kubernetes_metadata_filter \
+        fluent-plugin-multi-format-parser \
         fluent-plugin-rewrite-tag-filter \
         fluent-plugin-loggly \
         fluent-plugin-slack \
