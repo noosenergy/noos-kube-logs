@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/noosenergy/noos-kube-logs.svg?style=svg&circle-token=8658731bfa70cd9619d715b982fc3f4684760beb)](https://circleci.com/gh/noosenergy/noos-kube-logs)
+[![CircleCI](https://circleci.com/gh/noosenergy/noos-kube-logs.svg?style=svg&circle-token=e01ef89adb6911ad8aa3247ad426ad538cb10889)](https://circleci.com/gh/noosenergy/noos-kube-logs)
 
 # Noos Kube Logs
 Logs monitoring boilerplate for the Noos platform.
