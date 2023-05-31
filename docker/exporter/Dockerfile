@@ -20,7 +20,7 @@ RUN apt-get update \
     && gem install \
         fluent-plugin-kubernetes_metadata_filter \
         fluent-plugin-multi-format-parser \
-        fluent-plugin-rewrite-tag-filter \
+        fluent-plugin-concat \
         fluent-plugin-loggly \
         fluent-plugin-slack \
     && gem sources --clear-all \
