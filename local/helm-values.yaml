@@ -1,8 +1,4 @@
-# To point shell to minikube's docker-daemon:
-# `eval $(minikube docker-env)`
-# To revert:
-# `eval $(minikube docker-env --unset)`
-
+---
 rbac:
   enabled: true
 
@@ -10,7 +6,7 @@ exporter:
   image:
     repository: "noosenergy/fluentd"
     tag: latest
-    # To be set @ `Never` otherwise minikube upload from network
+    # To be set @ `Never` otherwise upload from network
     pullPolicy: Never
   tolerations:
     # Don't deploy onto the K8s master node
