@@ -5,7 +5,7 @@ rbac:
 
 exporter:
   image:
-    repository:
+    repository: noosenergy/fluentd
     tag: latest
     pullPolicy: Always
   priorityClassName:

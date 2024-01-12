@@ -7,22 +7,18 @@ default:
       branches:
         only: master
 
-
 # ----------------
 # Orbs declaration
 # ----------------
 
 orbs:
-
-  noos-ci: noosenergy/noos-ci@0.1.17
-
+  noos-ci: noosenergy/noos-ci@0.2.2
 
 # --------------
 # Pipeline tasks
 # --------------
 
 jobs:
-
   lint_chart:
     executor: noos-ci/default
     steps:
@@ -59,13 +55,11 @@ jobs:
           workspace: noos-prod
           plan_message: ${CIRCLE_BUILD_URL}
 
-
 # -----------------
 # Pipeline workflow
 # -----------------
 
 workflows:
-
   lint_build_deploy:
     jobs:
       - lint_chart
@@ -74,17 +68,13 @@ workflows:
           <<: *filter_master_only
       - build_chart:
           context: CIRCLECI_SHARED
-          requires:
-            - hold
+          requires: [hold]
           <<: *filter_master_only
       - build_image:
           context: DOCKERHUB_SHARED
-          requires:
-            - hold
+          requires: [hold]
           <<: *filter_master_only
       - deploy:
           context: NOOS_PROD_SHARED
-          requires:
-            - build_chart
-            - build_image
+          requires: [build_chart, build_image]
           <<: *filter_master_only
