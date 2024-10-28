@@ -1,8 +1,8 @@
 # https://hub.docker.com/r/fluent/fluentd/
-# https://github.com/fluent/fluentd-docker-image/tree/master/v1.15
-# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.15
+# https://github.com/fluent/fluentd-docker-image/tree/master/v1.17
+# https://github.com/fluent/fluentd-kubernetes-daemonset/tree/master/docker-image/v1.17
 
-FROM fluent/fluentd:v1.16-debian
+FROM fluent/fluentd:v1.17-debian
 
 USER root
 
