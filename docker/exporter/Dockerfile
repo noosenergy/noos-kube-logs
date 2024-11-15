@@ -22,6 +22,7 @@ RUN apt-get update \
         fluent-plugin-multi-format-parser \
         fluent-plugin-concat \
         fluent-plugin-loggly \
+        fluent-plugin-logzio \
         fluent-plugin-slack \
     && gem sources --clear-all \
     && rm -rf \
