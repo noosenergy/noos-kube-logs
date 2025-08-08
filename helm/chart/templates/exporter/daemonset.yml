@@ -54,9 +54,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            # Fluent Bit configuration file
-            - name: FLB_CONFIG_FILE
-              value: "/fluent-bit/etc/fluent-bit.conf"
           {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:

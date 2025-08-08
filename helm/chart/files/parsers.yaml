@@ -7,10 +7,7 @@ parsers:
     time_key: time
     time_format: "%Y-%m-%dT%H:%M:%S.%L"
     time_keep: on
-    # decode_field_as:
-    #   - escaped_utf8: log
-    #     action: do_next
-    #   - json: log
+    decode_field_as: escaped_utf8 log
 
   - name: docker
     format: json

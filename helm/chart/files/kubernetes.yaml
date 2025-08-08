@@ -39,15 +39,15 @@ pipeline:
     - name: grep
       match: kube.*
       exclude:
-        - kubernetes_namespace_name: kube-system
-        - kubernetes_namespace_name: kube-public
-        - kubernetes_namespace_name: kube-node-lease
+        - $kubernetes['namespace_name'] kube-system
+        - $kubernetes['namespace_name'] kube-public
+        - $kubernetes['namespace_name'] kube-node-lease
 
     # Don't emit logs for JupyterHub specific pods
-    # - name: grep
-    #   match: kube.*
-    #   exclude:
-    #     - kubernetes_pod_name: .*-hub.*
+    - name: grep
+      match: kube.*
+      exclude:
+        - $kubernetes['pod_name'] .*-hub.*
 
   outputs:
     # Push all container logs to Loggly
