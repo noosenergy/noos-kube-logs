@@ -7,7 +7,7 @@ exporter:
     repository: "noosenergy/fluentd"
     tag: latest
     # To be set @ `Never` otherwise upload from network
-    pullPolicy: Never
+    pullPolicy: Always
   tolerations:
     # Don't deploy onto the K8s master node
     - key: node-role.kubernetes.io/master
