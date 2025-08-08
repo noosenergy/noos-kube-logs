@@ -1,13 +1,13 @@
-# https://github.com/fluent/fluentd-kubernetes-daemonset
+# https://github.com/fluent/fluent-bit
 
 rbac:
   enabled: false
 
 exporter:
   image:
-    repository: noosenergy/fluentd
+    repository: fluent/fluent-bit
     tag: latest
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
   priorityClassName:
   tolerations: []
   resources: {}

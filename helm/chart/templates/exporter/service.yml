@@ -8,7 +8,7 @@ spec:
   # https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#communicating-with-daemon-pods
   type: ClusterIP
   selector:
-    app: fluentd-lb
+    app: fluent-bit-lb
   ports:
     - name: forward
       port: 24224
@@ -16,3 +16,4 @@ spec:
     - name: http
       port: 9880
       targetPort: http
+

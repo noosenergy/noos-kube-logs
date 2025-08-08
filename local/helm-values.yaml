@@ -4,7 +4,7 @@ rbac:
 
 exporter:
   image:
-    repository: "noosenergy/fluentd"
+    repository: fluent/fluent-bit
     tag: latest
     # To be set @ `Never` otherwise upload from network
     pullPolicy: Never
@@ -15,6 +15,7 @@ exporter:
       effect: NoSchedule
   env:
     FLUENTD__LOGGLY_URL:
+    FLUENTD__LOGGLY_TOKEN: FIXME
     FLUENTD__SLACK_URL:
   resources:
     requests:

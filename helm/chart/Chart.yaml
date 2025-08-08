@@ -1,5 +1,5 @@
 apiVersion: v2
 name: kube-logs
-version: 0.1.0
+version: 0.2.0
 type: application
-description: Noos logs monitoring boilerplate
+description: Noos logs monitoring with Fluent Bit

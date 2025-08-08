@@ -1,17 +1,17 @@
-# https://github.com/fluent/fluentd-kubernetes-daemonset
+# https://github.com/fluent/fluent-bit
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fluentd-exporter
+  name: fluent-bit-exporter
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: fluentd-lb
+      app: fluent-bit-lb
   template:
     metadata:
       labels:
-        app: fluentd-lb
+        app: fluent-bit-lb
       annotations:
         # Trick to enforce Helm rolling update
         strategyTrigger: {{ randAlphaNum 5 | quote }}
@@ -22,7 +22,7 @@ spec:
       priorityClassName: {{ .Values.exporter.priorityClassName }}
       {{- end }}
       {{- if .Values.rbac.enabled }}
-      serviceAccountName: fluentd-exporter
+      serviceAccountName: fluent-bit-exporter
       {{- end }}
       {{- if .Values.exporter.tolerations }}
       tolerations:
@@ -34,9 +34,9 @@ spec:
         - name: host-volume
           hostPath:
             path: /var/log
-        # Mount actual docker container logs
+        # Mount actual container logs
         # (symlinked to /var/log/containers)
-        - name: docker-volume
+        - name: container-volume
           hostPath:
             path: /var/lib/docker/containers
         - name: exporter-volume
@@ -47,14 +47,16 @@ spec:
         - name: exporter
           image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+          commands: ["/fluent-bit/bin/fluent-bit"]
+          args: ["-c", "/fluent-bit/etc/fluent-bit.yaml"]
           env:
             - name: K8S_NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            # To mount Fluentd main config in Docker
-            - name: FLUENTD_CONF
-              value: "fluentd.conf"
+            # Fluent Bit configuration file
+            - name: FLB_CONFIG_FILE
+              value: "/fluent-bit/etc/fluent-bit.conf"
           {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:
@@ -68,11 +70,11 @@ spec:
           volumeMounts:
             - name: host-volume
               mountPath: /var/log
-            - name: docker-volume
+            - name: container-volume
               mountPath: /var/lib/docker/containers
               readOnly: true
             - name: exporter-volume
-              mountPath: /fluentd/etc/
+              mountPath: /fluent-bit/etc
               readOnly: true
           {{- if .Values.exporter.resources }}
           resources:
