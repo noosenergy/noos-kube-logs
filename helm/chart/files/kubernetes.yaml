@@ -62,6 +62,17 @@ pipeline:
     - name: stdout
       match: kube.*
 
+    - name: http
+      match: kube.*
+      tls: on
+      host: ${BETTERSTACK_HOST}
+      port: 443
+      uri: /fluentbit
+      header:
+        - Authorization Bearer ${BETTERSTACK_TOKEN}
+        - Content-Type application/msgpack
+      format: msgpack
+      retry_limit: 5
     # Push all container logs to Logzio
     # - name: http
     #   match: kube.*

@@ -17,6 +17,8 @@ exporter:
     FLUENTD__LOGGLY_URL:
     FLUENTD__LOGGLY_TOKEN: FIXME
     FLUENTD__SLACK_URL:
+    BETTERSTACK_HOST: FIXME
+    BETTERSTACK_TOKEN: FIXME
   resources:
     requests:
       cpu: 100m
