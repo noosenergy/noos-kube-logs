@@ -14,6 +14,9 @@ pipeline:
         tag: ${TAG}
 
   outputs:
+    - name: stdout
+      match: 'services.*'
+
     # Push all service logs to Slack (commented out)
     # - name: slack
     #   match: services.*

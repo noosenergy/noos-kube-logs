@@ -14,5 +14,5 @@ service:
 # All other log sources
 includes:
   - kubernetes.yaml
-  # - services.yaml
+  - services.yaml
   - tests.yaml
