@@ -18,8 +18,14 @@ pipeline:
       match: kube.*
       merge_log: on
       keep_log: off
-      k8s-logging.parser: on
-      k8s-logging.exclude: off
+      labels: off
+
+    # Remove some fields from the log record
+    - name: record_modifier
+      match: 'kube.*'
+      remove_key:
+       - _p
+       - time
 
     # Parse nested JSON log messages
     # - name: parser
@@ -42,7 +48,7 @@ pipeline:
       match: kube.*
       exclude:
         - $kubernetes['pod_name'] .*-hub.*
-        - $kubernetes['pod_name''] .*fluent-bit.*
+        - $kubernetes['pod_name'] .*fluent-bit.*
 
   outputs:
     # Push all container logs to Loggly
@@ -53,8 +59,6 @@ pipeline:
       uri: /bulk/${FLUENTD__LOGGLY_TOKEN}/tag/testing/
       header: Content-Type application/json
       format: json_lines
-      json_date_key: "@timestamp"
-      json_date_format: iso8601
       tls: on
       tls.verify: on
       retry_limit: 5
@@ -62,6 +66,7 @@ pipeline:
     # - name: stdout
     #   match: kube.*
 
+    # Push all container logs to BetterStack
     - name: http
       match: kube.*
       tls: on
@@ -82,8 +87,6 @@ pipeline:
       uri: ?token=${LOGZIO_TOKEN}
       header: Content-Type application/json
       format: json_lines
-      json_date_key: "@timestamp"
-      json_date_format: iso8601
       tls: on
       tls.verify: on
       retry_limit: 5
