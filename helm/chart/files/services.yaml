@@ -4,14 +4,17 @@ pipeline:
     - name: forward
       listen: 0.0.0.0
       port: 24224
-      tag: services.*
+      tag_prefix: services.
 
   filters:
-    # Add tag field to record
-    - name: record_modifier
+    # Add tag field to the log record
+    # e.g.: input has tag "my.app" then
+    # append to record {"tag": "my.app"}
+    - name: lua
       match: services.*
-      record:
-        tag: ${TAG}
+      script: add_tag.lua
+      call: add_tag_field
+
 
   outputs:
     - name: stdout
