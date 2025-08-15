@@ -22,6 +22,12 @@ pipeline:
       match: "services.*"
       script: /fluent-bit/etc/restructure_log.lua
       call: restructure_log
+    # Format records for Slack blocks
+    - name: lua
+      match: services.*
+      script: format_slack_blocks.lua
+      call: format_slack_blocks
+
 
   outputs:
     # Push all service logs to Slack
