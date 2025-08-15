@@ -3,7 +3,7 @@
 
 service:
   flush: 10
-  log_level: info
+  log_level: warn
   daemon: off
   # parsers_file: parsers.yaml
   http_server: on
