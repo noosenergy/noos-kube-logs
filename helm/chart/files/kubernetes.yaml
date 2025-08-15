@@ -73,16 +73,18 @@ pipeline:
         - Content-Type application/msgpack
       format: msgpack
       retry_limit: 5
+
     # Push all container logs to Logzio
-    # - name: http
-    #   match: kube.*
-    #   host: listener.logz.io
-    #   port: 8070
-    #   uri: /?token=${FLUENTD__LOGZIO_TOKEN}&type=fluentbit
-    #   header: Content-Type application/json
-    #   format: json_lines
-    #   json_date_key: "@timestamp"
-    #   json_date_format: iso8601
-    #   tls: on
-    #   tls.verify: on
-    #   retry_limit: 5
+    - name: http
+      match: kube.*
+      host: listener-uk.logz.io
+      port: 8071
+      uri: ?token=${LOGZIO_TOKEN}
+      header: Content-Type application/json
+      format: json_lines
+      json_date_key: "@timestamp"
+      json_date_format: iso8601
+      tls: on
+      tls.verify: on
+      retry_limit: 5
+
