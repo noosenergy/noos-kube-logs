@@ -20,7 +20,7 @@ pipeline:
     - name: stdout
       match: 'services.*'
 
-    # Push all service logs to Slack (commented out)
-    # - name: slack
-    #   match: services.*
-    #   webhook: ${FLUENTD__SLACK_URL}
+    # Push all service logs to Slack
+    - name: slack
+      match: services.*
+      webhook: ${FLUENTD__SLACK_URL}
