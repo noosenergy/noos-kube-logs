@@ -46,21 +46,21 @@ pipeline:
 
   outputs:
     # Push all container logs to Loggly
-    # - name: http
-    #   match: kube.*
-    #   host: logs-01.loggly.com
-    #   port: 443
-    #   uri: /bulk/${FLUENTD__LOGGLY_TOKEN}/tag/testing/
-    #   header: Content-Type application/json
-    #   format: json_lines
-    #   json_date_key: "@timestamp"
-    #   json_date_format: iso8601
-    #   tls: on
-    #   tls.verify: on
-    #   retry_limit: 5
-
-    - name: stdout
+    - name: http
       match: kube.*
+      host: logs-01.loggly.com
+      port: 443
+      uri: /bulk/${FLUENTD__LOGGLY_TOKEN}/tag/testing/
+      header: Content-Type application/json
+      format: json_lines
+      json_date_key: "@timestamp"
+      json_date_format: iso8601
+      tls: on
+      tls.verify: on
+      retry_limit: 5
+
+    # - name: stdout
+    #   match: kube.*
 
     - name: http
       match: kube.*
