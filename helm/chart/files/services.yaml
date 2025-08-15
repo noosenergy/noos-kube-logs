@@ -15,12 +15,18 @@ pipeline:
       script: add_tag.lua
       call: add_tag_field
 
+    # Format records for Slack blocks
+    - name: lua
+      match: services.*
+      script: format_slack_blocks.lua
+      call: format_slack_blocks
+
 
   outputs:
     - name: stdout
       match: 'services.*'
 
-    # Push all service logs to Slack (commented out)
-    # - name: slack
-    #   match: services.*
-    #   webhook: ${FLUENTD__SLACK_URL}
+    # Push all service logs to Slack
+    - name: slack
+      match: services.*
+      webhook: ${FLUENTD__SLACK_URL}

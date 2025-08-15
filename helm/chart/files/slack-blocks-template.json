@@ -1,0 +1,42 @@
+{
+	"blocks": [
+		{
+			"type": "rich_text",
+			"elements": [
+				{
+					"type": "rich_text_section",
+					"elements": [
+						{
+							"type": "text",
+							"text": "${tag}: ",
+							"style": {
+								"bold": true
+							}
+						},
+						{
+							"type": "text",
+							"text": "${event}",
+							"style": {
+								"code": true
+							}
+						},
+						{
+							"type": "text",
+							"text": " @ ${time}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "${params}"
+			}
+		}
+	]
+}
