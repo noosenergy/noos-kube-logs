@@ -22,10 +22,10 @@ pipeline:
 
     # Remove some fields from the log record
     - name: record_modifier
-      match: 'kube.*'
+      match: "kube.*"
       remove_key:
-       - _p
-       - time
+        - _p
+        - time
 
     # Parse nested JSON log messages
     # - name: parser
@@ -62,6 +62,7 @@ pipeline:
       tls: on
       tls.verify: on
       retry_limit: 5
+      json_date_key: false
 
     # - name: stdout
     #   match: kube.*
@@ -78,6 +79,7 @@ pipeline:
         - Content-Type application/msgpack
       format: msgpack
       retry_limit: 5
+      json_date_key: false
 
     # Push all container logs to Logzio
     - name: http
@@ -90,4 +92,4 @@ pipeline:
       tls: on
       tls.verify: on
       retry_limit: 5
-
+      json_date_key: false
