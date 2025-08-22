@@ -18,6 +18,11 @@ spec:
     spec:
       # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
       terminationGracePeriodSeconds: 30
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
       {{- if .Values.exporter.priorityClassName }}
       priorityClassName: {{ .Values.exporter.priorityClassName }}
       {{- end }}
@@ -49,21 +54,18 @@ spec:
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
           commands: ["/fluent-bit/bin/fluent-bit"]
           args: ["-c", "/fluent-bit/etc/fluent-bit.yaml"]
-          env:
-            - name: K8S_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
           {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:
                 name: exporter-dotenv
           {{- end }}
           ports:
-            - name: forward
+            - name: services
               containerPort: 24224
-            - name: http
+            - name: tests
               containerPort: 9880
+            - name: http
+              containerPort: 2020
           volumeMounts:
             - name: host-volume
               mountPath: /var/log
@@ -77,3 +79,12 @@ spec:
           resources:
             {{- toYaml .Values.exporter.resources | nindent 12 }}
           {{- end }}
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+            httpGet:
+              path: /api/v1/health
+              port: 2020
