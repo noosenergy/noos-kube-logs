@@ -1,13 +1,14 @@
 # Logging configuration for testing purposes
+
 pipeline:
   inputs:
     - name: http
+      tag: tests.*
       listen: 0.0.0.0
       port: 9880
-      tag: test.*
 
   outputs:
-    # Catch all test logs to stdout
+    # Push all test logs to stdout
     - name: stdout
-      match: test.*
+      match: 'tests.*'
       format: json_lines
