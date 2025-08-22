@@ -1,62 +1,59 @@
 # All container logs are maintained as symlinks onto the node
+
 pipeline:
   inputs:
     - name: tail
-      path: /var/log/containers/*.log
-      multiline.parser: docker, cri
-      tag: kube.*
-      db: /var/log/fluent-bit-containers.db
-      db.sync: normal
-      mem_buf_limit: 50MB
-      skip_long_lines: on
-      refresh_interval: 10
+      tag: kubernetes.*
       read_from_head: true
+      # Don't collect logs for all system pods
+      exclude_path: /var/log/containers/*_kube-*
+      path: /var/log/containers/*.log
+      # Log parsing
+      multiline.parser: docker, cri
+      skip_long_lines: on
+      # Storage activated
+      storage.type: filesystem
+      db: /var/fluent-bit/state/containers.db
+      mem_buf_limit: 50MB
+      refresh_interval: 10
 
   filters:
     # Add kubernetes metadata
     - name: kubernetes
-      match: kube.*
+      match: 'kubernetes.*'
+      # To precise given a custom tag
+      kube_tag_prefix: kubernetes.var.log.containers.
       merge_log: on
       keep_log: off
       labels: off
 
     # Remove some fields from the log record
     - name: record_modifier
-      match: "kube.*"
+      match: 'kubernetes.*'
       remove_key:
         - _p
         - time
 
-    # Parse nested JSON log messages
-    # - name: parser
-    #   match: kube.*
-    #   key_name: log
-    #   parser: json
-    #   reserve_data: on
-    #   preserve_key: on
-
-    # Don't emit logs for all system pods
+    # Don't emit logs for all Jupyter-related pods
     - name: grep
-      match: kube.*
+      match: 'kubernetes.*'
       exclude:
-        - $kubernetes['namespace_name'] kube-system
-        - $kubernetes['namespace_name'] kube-public
-        - $kubernetes['namespace_name'] kube-node-lease
+        - $kubernetes['namespace_name'] .*-hub
 
-    # Don't emit logs for JupyterHub specific pods
+    # Don't emit logs for fluent-bit pods
     - name: grep
-      match: kube.*
+      match: 'kubernetes.*'
       exclude:
-        - $kubernetes['pod_name'] .*-hub.*
         - $kubernetes['pod_name'] .*fluent-bit.*
 
   outputs:
     # Push all container logs to Loggly
     - name: http
-      match: kube.*
-      host: logs-01.loggly.com
+      match: 'kubernetes.*'
+      storage.total_limit_size: 5M
+      host: ${FLUENTBIT__LOGGLY_HOST}
       port: 443
-      uri: /bulk/${FLUENTD__LOGGLY_TOKEN}/tag/testing/
+      uri: /bulk/${FLUENTBIT__LOGGLY_TOKEN}/tag/testing/
       header: Content-Type application/json
       format: json_lines
       tls: on
@@ -64,29 +61,13 @@ pipeline:
       retry_limit: 5
       json_date_key: false
 
-    # - name: stdout
-    #   match: kube.*
-
-    # Push all container logs to BetterStack
-    - name: http
-      match: kube.*
-      tls: on
-      host: ${BETTERSTACK_HOST}
-      port: 443
-      uri: /fluentbit
-      header:
-        - Authorization Bearer ${BETTERSTACK_TOKEN}
-        - Content-Type application/msgpack
-      format: msgpack
-      retry_limit: 5
-      json_date_key: false
-
     # Push all container logs to Logzio
     - name: http
-      match: kube.*
-      host: listener-uk.logz.io
+      match: 'kubernetes.*'
+      storage.total_limit_size: 5M
+      host: ${FLUENTBIT__LOGZIO_HOST}
       port: 8071
-      uri: ?token=${LOGZIO_TOKEN}
+      uri: ?token=${FLUENTBIT__LOGZIO_TOKEN}
       header: Content-Type application/json
       format: json_lines
       tls: on
