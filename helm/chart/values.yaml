@@ -1,12 +1,12 @@
-# https://github.com/fluent/fluent-bit
+# https://github.com/fluent/helm-charts/tree/main/charts/fluent-bit
 
 rbac:
   enabled: false
 
 exporter:
   image:
-    repository: fluent/fluent-bit
-    tag: latest
+    repository: cr.fluentbit.io/fluent/fluent-bit
+    tag: 4.0.7
     pullPolicy: IfNotPresent
   priorityClassName:
   tolerations: []
