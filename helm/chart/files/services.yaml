@@ -1,26 +1,24 @@
 # Logging configuration for service events
+
 pipeline:
   inputs:
     - name: forward
+      tag_prefix: services.
       listen: 0.0.0.0
       port: 24224
-      tag_prefix: services.
 
   filters:
     # Add tag field to the log record
     # e.g.: input has tag "my.app" then
     # append to record {"tag": "my.app"}
     - name: lua
-      match: services.*
-      script: add_tag.lua
+      match: 'services.*'
+      script: /fluent-bit/etc/add_tag.lua
       call: add_tag_field
 
 
   outputs:
-    - name: stdout
-      match: 'services.*'
-
     # Push all service logs to Slack
     - name: slack
-      match: services.*
-      webhook: ${FLUENTD__SLACK_URL}
+      match: 'services.*'
+      webhook: ${FLUENTBIT__SLACK_URL}
