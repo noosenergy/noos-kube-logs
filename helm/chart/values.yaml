@@ -4,6 +4,7 @@ rbac:
   enabled: false
 
 exporter:
+  deployTag: latest
   image:
     repository: cr.fluentbit.io/fluent/fluent-bit
     tag: 4.0.7

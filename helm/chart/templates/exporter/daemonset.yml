@@ -14,7 +14,7 @@ spec:
         app: fluent-bit-lb
       annotations:
         # Trick to enforce Helm rolling update
-        strategyTrigger: {{ randAlphaNum 5 | quote }}
+        deployTag: {{ .Values.exporter.deployTag }}
     spec:
       # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
       terminationGracePeriodSeconds: 30
