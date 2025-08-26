@@ -60,7 +60,7 @@ pipeline:
       storage.total_limit_size: 5M
       host: ${FLUENTBIT__LOGGLY_HOST}
       port: 443
-      uri: /bulk/${FLUENTBIT__LOGGLY_TOKEN}/tag/testing/
+      uri: /bulk/${FLUENTBIT__LOGGLY_TOKEN}/tag/bulk/
       header: Content-Type application/json
       format: json_lines
       tls: on
