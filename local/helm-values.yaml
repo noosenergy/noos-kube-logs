@@ -3,22 +3,9 @@ rbac:
   enabled: true
 
 exporter:
-  image:
-    repository: "noosenergy/fluentd"
-    tag: latest
-    # To be set @ `Never` otherwise upload from network
-    pullPolicy: Never
-  tolerations:
-    # Don't deploy onto the K8s master node
-    - key: node-role.kubernetes.io/master
-      operator: Exists
-      effect: NoSchedule
   env:
-    FLUENTD__LOGGLY_URL:
-    FLUENTD__SLACK_URL:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 200Mi
-    limits:
-      memory: 500Mi
+    FLUENTBIT__LOGGLY_HOST:
+    FLUENTBIT__LOGGLY_TOKEN:
+    FLUENTBIT__LOGZIO_HOST:
+    FLUENTBIT__LOGZIO_TOKEN:
+    FLUENTBIT__SLACK_URL:

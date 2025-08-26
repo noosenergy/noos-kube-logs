@@ -1,14 +1,24 @@
-# https://github.com/fluent/fluentd-kubernetes-daemonset
+# https://github.com/fluent/helm-charts/tree/main/charts/fluent-bit
 
 rbac:
   enabled: false
 
 exporter:
+  deployTag: latest
   image:
-    repository: noosenergy/fluentd
-    tag: latest
-    pullPolicy: Always
+    repository: cr.fluentbit.io/fluent/fluent-bit
+    tag: 4.0.7
+    pullPolicy: IfNotPresent
   priorityClassName:
-  tolerations: []
-  resources: {}
+  tolerations:
+    # Don't deploy onto the K8s master node
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      memory: 500Mi
   env: {}

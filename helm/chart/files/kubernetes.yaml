@@ -1,0 +1,83 @@
+# All container logs are maintained as symlinks onto the node
+
+pipeline:
+  inputs:
+    - name: tail
+      tag: kubernetes.*
+      read_from_head: true
+      # Don't collect logs for all system pods
+      exclude_path: /var/log/containers/*_kube-*
+      path: /var/log/containers/*.log
+      # Log parsing
+      multiline.parser: docker, cri
+      skip_long_lines: on
+      # Storage activated
+      storage.type: filesystem
+      db: /var/fluent-bit/state/containers.db
+      mem_buf_limit: 50MB
+      refresh_interval: 10
+
+  filters:
+    # Add kubernetes metadata
+    - name: kubernetes
+      match: 'kubernetes.*'
+      # To precise given a custom tag
+      kube_tag_prefix: kubernetes.var.log.containers.
+      merge_log: on
+      keep_log: off
+      labels: off
+
+    # Remove some fields from the log record
+    - name: record_modifier
+      match: 'kubernetes.*'
+      remove_key:
+        - _p
+        - time
+
+    # Dynamically restructure log format
+    # move all keys except timestamp and kubernetes under 'log_object'
+    - name: lua
+      match: 'kubernetes.*'
+      script: /fluent-bit/etc/restructure_log.lua
+      call: restructure_log
+
+    # Don't emit logs for all Jupyter-related pods
+    - name: grep
+      match: 'kubernetes.*'
+      exclude:
+        - $kubernetes['namespace_name'] .*-hub
+
+    # Don't emit logs for fluent-bit pods
+    - name: grep
+      match: 'kubernetes.*'
+      exclude:
+        - $kubernetes['pod_name'] .*fluent-bit.*
+
+  outputs:
+    # Push all container logs to Loggly
+    - name: http
+      match: 'kubernetes.*'
+      storage.total_limit_size: 5M
+      host: ${FLUENTBIT__LOGGLY_HOST}
+      port: 443
+      uri: /bulk/${FLUENTBIT__LOGGLY_TOKEN}/tag/bulk/
+      header: Content-Type application/json
+      format: json_lines
+      tls: on
+      tls.verify: on
+      retry_limit: 5
+      json_date_key: false
+
+    # Push all container logs to Logzio
+    - name: http
+      match: 'kubernetes.*'
+      storage.total_limit_size: 5M
+      host: ${FLUENTBIT__LOGZIO_HOST}
+      port: 8071
+      uri: ?token=${FLUENTBIT__LOGZIO_TOKEN}
+      header: Content-Type application/json
+      format: json_lines
+      tls: on
+      tls.verify: on
+      retry_limit: 5
+      json_date_key: false

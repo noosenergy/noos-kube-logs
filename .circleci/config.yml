@@ -12,7 +12,7 @@ default:
 # ----------------
 
 orbs:
-  noos-ci: noosenergy/noos-ci@0.4.0
+  noos-ci: noosenergy/noos-ci@0.4.3
 
 # --------------
 # Pipeline tasks
@@ -33,23 +33,13 @@ jobs:
           registry_provider: aws
           chart_name: noos-prod/kube-logs
 
-  build_image:
-    executor: noos-ci/default
-    steps:
-      - checkout
-      - noos-ci/docker_build_image:
-          registry_provider: docker
-          image_context: ./docker/exporter
-          image_name: fluentd
-          image_tag: ${CIRCLE_SHA1}
-
   deploy:
     executor: noos-ci/default
     steps:
       - checkout
       - noos-ci/terraform_update_variable:
           workspace: noos-prod
-          variable_name: kube_logs_exporter_image_tag
+          variable_name: kube_logs_exporter_deploy_tag
           variable_value: ${CIRCLE_SHA1}
       - noos-ci/terraform_run_plan:
           workspace: noos-prod
@@ -70,11 +60,7 @@ workflows:
           context: CIRCLECI_SHARED
           requires: [hold]
           <<: *filter_master_only
-      - build_image:
-          context: DOCKERHUB_SHARED
-          requires: [hold]
-          <<: *filter_master_only
       - deploy:
           context: NOOS_PROD_SHARED
-          requires: [build_chart, build_image]
+          requires: [build_chart]
           <<: *filter_master_only

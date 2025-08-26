@@ -1,0 +1,22 @@
+# Logging configuration for testing purposes
+
+pipeline:
+  inputs:
+    - name: http
+      tag: tests.*
+      listen: 0.0.0.0
+      port: 9880
+
+  filters:
+    # Dynamically restructure log format
+    # move all keys except timestamp under 'log_object'
+    - name: lua
+      match: 'tests.*'
+      script: /fluent-bit/etc/restructure_log.lua
+      call: restructure_log
+
+  outputs:
+    # Push all test logs to stdout
+    - name: stdout
+      match: 'tests.*'
+      format: json_lines

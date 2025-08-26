@@ -1,28 +1,33 @@
-# https://github.com/fluent/fluentd-kubernetes-daemonset
+# https://github.com/fluent/fluent-bit
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fluentd-exporter
+  name: fluent-bit-exporter
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: fluentd-lb
+      app: fluent-bit-lb
   template:
     metadata:
       labels:
-        app: fluentd-lb
+        app: fluent-bit-lb
       annotations:
         # Trick to enforce Helm rolling update
-        strategyTrigger: {{ randAlphaNum 5 | quote }}
+        deployTag: {{ .Values.exporter.deployTag }}
     spec:
       # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
       terminationGracePeriodSeconds: 30
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 0
       {{- if .Values.exporter.priorityClassName }}
       priorityClassName: {{ .Values.exporter.priorityClassName }}
       {{- end }}
       {{- if .Values.rbac.enabled }}
-      serviceAccountName: fluentd-exporter
+      serviceAccountName: fluent-bit-exporter
       {{- end }}
       {{- if .Values.exporter.tolerations }}
       tolerations:
@@ -34,9 +39,9 @@ spec:
         - name: host-volume
           hostPath:
             path: /var/log
-        # Mount actual docker container logs
+        # Mount actual container logs
         # (symlinked to /var/log/containers)
-        - name: docker-volume
+        - name: container-volume
           hostPath:
             path: /var/lib/docker/containers
         - name: exporter-volume
@@ -47,34 +52,39 @@ spec:
         - name: exporter
           image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
-          env:
-            - name: K8S_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            # To mount Fluentd main config in Docker
-            - name: FLUENTD_CONF
-              value: "fluentd.conf"
+          commands: ["/fluent-bit/bin/fluent-bit"]
+          args: ["-c", "/fluent-bit/etc/fluent-bit.yaml"]
           {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:
                 name: exporter-dotenv
           {{- end }}
           ports:
-            - name: forward
+            - name: services
               containerPort: 24224
-            - name: http
+            - name: tests
               containerPort: 9880
+            - name: http
+              containerPort: 2020
           volumeMounts:
             - name: host-volume
               mountPath: /var/log
-            - name: docker-volume
+            - name: container-volume
               mountPath: /var/lib/docker/containers
               readOnly: true
             - name: exporter-volume
-              mountPath: /fluentd/etc/
+              mountPath: /fluent-bit/etc
               readOnly: true
           {{- if .Values.exporter.resources }}
           resources:
             {{- toYaml .Values.exporter.resources | nindent 12 }}
           {{- end }}
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+            httpGet:
+              path: /api/v1/health
+              port: 2020
