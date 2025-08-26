@@ -9,13 +9,19 @@ pipeline:
 
   filters:
     # Add tag field to the log record
-    # e.g.: input has tag "my.app" then
+    # e.g.: input has tag 'my.app' then
     # append to record {"tag": "my.app"}
     - name: lua
       match: 'services.*'
       script: /fluent-bit/etc/add_tag.lua
       call: add_tag_field
 
+    # Dynamically restructure log format
+    # move all keys except timestamp under 'log_object'
+    - name: lua
+      match: 'services.*'
+      script: /fluent-bit/etc/restructure_log.lua
+      call: restructure_log
 
   outputs:
     # Push all service logs to Slack

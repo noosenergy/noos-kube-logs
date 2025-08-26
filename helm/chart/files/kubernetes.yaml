@@ -34,6 +34,13 @@ pipeline:
         - _p
         - time
 
+    # Dynamically restructure log format
+    # move all keys except timestamp and kubernetes under 'log_object'
+    - name: lua
+      match: 'kubernetes.*'
+      script: /fluent-bit/etc/restructure_log.lua
+      call: restructure_log
+
     # Don't emit logs for all Jupyter-related pods
     - name: grep
       match: 'kubernetes.*'
