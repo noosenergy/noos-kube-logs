@@ -10,6 +10,15 @@ exporter:
     tag: 4.0.7
     pullPolicy: IfNotPresent
   priorityClassName:
-  tolerations: []
-  resources: {}
+  tolerations:
+    # Don't deploy onto the K8s master node
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  resources:
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      memory: 500Mi
   env: {}
