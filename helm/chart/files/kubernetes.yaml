@@ -20,7 +20,7 @@ pipeline:
   filters:
     # Add kubernetes metadata
     - name: kubernetes
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       # To precise given a custom tag
       kube_tag_prefix: kubernetes.var.log.containers.
       merge_log: on
@@ -29,7 +29,7 @@ pipeline:
 
     # Remove some fields from the log record
     - name: record_modifier
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       remove_key:
         - _p
         - time
@@ -37,26 +37,26 @@ pipeline:
     # Dynamically restructure log format
     # move all keys except timestamp and kubernetes under 'log_object'
     - name: lua
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       script: /fluent-bit/etc/restructure_log.lua
       call: restructure_log
 
     # Don't emit logs for all Jupyter-related pods
     - name: grep
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       exclude:
         - $kubernetes['namespace_name'] .*-hub
 
     # Don't emit logs for fluent-bit pods
     - name: grep
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       exclude:
         - $kubernetes['pod_name'] .*fluent-bit.*
 
   outputs:
     # Push all container logs to Loggly
     - name: http
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       storage.total_limit_size: 5M
       host: ${FLUENTBIT__LOGGLY_HOST}
       port: 443
@@ -70,7 +70,7 @@ pipeline:
 
     # Push all container logs to Logzio
     - name: http
-      match: 'kubernetes.*'
+      match: "kubernetes.*"
       storage.total_limit_size: 5M
       host: ${FLUENTBIT__LOGZIO_HOST}
       port: 8071
@@ -81,3 +81,14 @@ pipeline:
       tls.verify: on
       retry_limit: 5
       json_date_key: false
+
+    - name: datadog
+      match: "*"
+      host: ${FLUENTBIT__DATADOG_HOST}
+      tls: on
+      compress: gzip
+      apikey: ${FLUENTBIT__DATADOG_API_KEY}
+      dd_service: neptune
+      dd_source: kubernetes
+      dd_tags: env:prod
+      dd_message_key: log
