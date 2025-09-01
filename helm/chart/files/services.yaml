@@ -8,14 +8,6 @@ pipeline:
       port: 24224
 
   filters:
-    # Add tag field to the log record
-    # e.g.: input has tag 'my.app' then
-    # append to record {"tag": "my.app"}
-    - name: lua
-      match: "services.*"
-      script: /fluent-bit/etc/add_tag.lua
-      call: add_tag_field
-
     # Dynamically restructure log format
     # move all keys except timestamp under 'log_object'
     - name: lua
@@ -27,18 +19,18 @@ pipeline:
     - name: rewrite_tag
       match: "services.*"
       rule:
-        - "$log_object['tag'] ^services.*$ slack true"
+        - "$log_object['event'] ^.*$ slack.$TAG true"
 
     # Format records for Slack blocks
     - name: lua
-      match: "slack"
+      match: "slack.services.*"
       script: format_slack_msg.lua
       call: format_slack_msg
 
   outputs:
     # Push only "slack" tagged logs to Slack
     - name: http
-      match: "slack"
+      match: "slack.services.*"
       host: ${FLUENTBIT__SLACK_HOST}
       port: 443
       tls: on

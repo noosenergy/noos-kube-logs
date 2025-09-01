@@ -2,7 +2,8 @@ function format_slack_msg(tag, ts, record)
     local function s(x, d) return x ~= nil and tostring(x) or (d or "") end
     local lo = (type(record) == "table" and type(record.log_object) == "table") and record.log_object or {}
 
-    local tag_s   = s(lo.tag, tag or "unknown")
+    -- Build strings for the markdown title
+    local tag_s = s(tag or "unknown")
     local event_s = s(lo.event, "unknown"):gsub("`", "ʼ")
     local time_s  = s(record.timestamp or ts or "unknown"):gsub("`", "ʼ")
 
@@ -19,7 +20,7 @@ function format_slack_msg(tag, ts, record)
     end
     local params_md = (#lines > 0) and table.concat(lines, "\n") or ""
 
-    local markdown = string.format("*%s*: `%s` @ `%s`%s%s",
+    local markdown = string.format("*%s* `%s` @ `%s`%s%s",
                                tag_s, event_s, time_s,
                                params_md ~= "" and "\n" or "",
                                params_md)
