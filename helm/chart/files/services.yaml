@@ -3,19 +3,11 @@
 pipeline:
   inputs:
     - name: forward
-      tag_prefix: services.
+      tag_prefix: "services."
       listen: 0.0.0.0
       port: 24224
 
   filters:
-    # Add tag field to the log record
-    # e.g.: input has tag 'my.app' then
-    # append to record {"tag": "my.app"}
-    - name: lua
-      match: "services.*"
-      script: /fluent-bit/etc/add_tag.lua
-      call: add_tag_field
-
     # Dynamically restructure log format
     # move all keys except timestamp under 'log_object'
     - name: lua
@@ -23,8 +15,28 @@ pipeline:
       script: /fluent-bit/etc/restructure_log.lua
       call: restructure_log
 
-  outputs:
-    # Push all service logs to Slack
-    - name: slack
+    # Re-emit log record with "slack" tag
+    - name: rewrite_tag
       match: "services.*"
-      webhook: ${FLUENTBIT__SLACK_URL}
+      rule:
+        - "$log_object['event'] ^.*$ slack.$TAG true"
+
+    # Format records for Slack blocks
+    - name: lua
+      match: "slack.services.*"
+      script: format_slack_msg.lua
+      call: format_slack_msg
+
+  outputs:
+    # Push only "slack" tagged logs to Slack
+    - name: http
+      match: "slack.services.*"
+      host: ${FLUENTBIT__SLACK_HOST}
+      port: 443
+      tls: on
+      uri: /services/${FLUENTBIT__SLACK_TOKEN}
+      header: Content-Type application/json
+      format: json_lines
+
+    # Push unformatted "raw" logs to Loggly, Logzio and Datadog
+    # Caught by the kubernetes pipeline

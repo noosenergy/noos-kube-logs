@@ -54,9 +54,10 @@ pipeline:
         - $kubernetes['pod_name'] .*fluent-bit.*
 
   outputs:
-    # Push all container logs to Loggly
+    # Push kubernetes and services logs
+    # Push all logs to Loggly
     - name: http
-      match: "kubernetes.*"
+      match_regex: "(services..*)|(kubernetes..*)"
       storage.total_limit_size: 5M
       host: ${FLUENTBIT__LOGGLY_HOST}
       port: 443
@@ -68,9 +69,9 @@ pipeline:
       retry_limit: 5
       json_date_key: false
 
-    # Push all container logs to Logzio
+    # Push all logs to Logzio
     - name: http
-      match: "kubernetes.*"
+      match_regex: "(services..*)|(kubernetes..*)"
       storage.total_limit_size: 5M
       host: ${FLUENTBIT__LOGZIO_HOST}
       port: 8071
@@ -82,8 +83,9 @@ pipeline:
       retry_limit: 5
       json_date_key: false
 
+    # Push all logs to Datadog
     - name: datadog
-      match: "*"
+      match_regex: "(services..*)|(kubernetes..*)"
       host: ${FLUENTBIT__DATADOG_HOST}
       tls: on
       compress: gzip
