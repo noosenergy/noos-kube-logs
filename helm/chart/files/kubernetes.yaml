@@ -69,20 +69,6 @@ pipeline:
       retry_limit: 5
       json_date_key: false
 
-    # Push all logs to Logzio
-    - name: http
-      match_regex: "(services..*)|(kubernetes..*)"
-      storage.total_limit_size: 5M
-      host: ${FLUENTBIT__LOGZIO_HOST}
-      port: 8071
-      uri: ?token=${FLUENTBIT__LOGZIO_TOKEN}
-      header: Content-Type application/json
-      format: json_lines
-      tls: on
-      tls.verify: on
-      retry_limit: 5
-      json_date_key: false
-
     # Push all logs to Datadog
     - name: datadog
       match_regex: "(services..*)|(kubernetes..*)"
