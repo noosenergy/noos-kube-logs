@@ -55,20 +55,6 @@ pipeline:
 
   outputs:
     # Push kubernetes and services logs
-    # Push all logs to Loggly
-    - name: http
-      match_regex: "(services..*)|(kubernetes..*)"
-      storage.total_limit_size: 5M
-      host: ${FLUENTBIT__LOGGLY_HOST}
-      port: 443
-      uri: /bulk/${FLUENTBIT__LOGGLY_TOKEN}/tag/bulk/
-      header: Content-Type application/json
-      format: json_lines
-      tls: on
-      tls.verify: on
-      retry_limit: 5
-      json_date_key: false
-
     # Push all logs to Datadog
     - name: datadog
       match_regex: "(services..*)|(kubernetes..*)"

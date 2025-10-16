@@ -38,5 +38,5 @@ pipeline:
       header: Content-Type application/json
       format: json_lines
 
-    # Push unformatted "raw" logs to Loggly, and Datadog
+    # Push unformatted "raw" logs to Datadog
     # Caught by the kubernetes pipeline
