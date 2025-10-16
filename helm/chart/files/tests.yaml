@@ -11,12 +11,12 @@ pipeline:
     # Dynamically restructure log format
     # move all keys except timestamp under 'log_object'
     - name: lua
-      match: 'tests.*'
+      match: "tests.*"
       script: /fluent-bit/etc/restructure_log.lua
       call: restructure_log
 
   outputs:
     # Push all test logs to stdout
     - name: stdout
-      match: 'tests.*'
+      match: "tests.*"
       format: json_lines
