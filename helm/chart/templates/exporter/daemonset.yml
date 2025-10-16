@@ -53,7 +53,7 @@ spec:
           image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
           imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
           commands: ["/fluent-bit/bin/fluent-bit"]
-          args: ["-c", "/fluent-bit/etc/fluent-bit.yaml"]
+          args: ["-c", "/fluent-bit/etc/config.yaml"]
           {{- if .Values.exporter.env }}
           envFrom:
             - secretRef:
