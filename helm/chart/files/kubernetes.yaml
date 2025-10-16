@@ -62,7 +62,7 @@ pipeline:
       tls: on
       compress: gzip
       apikey: ${FLUENTBIT__DATADOG_API_KEY}
-      dd_service: neptune
-      dd_source: kubernetes
-      dd_tags: env:prod
+      dd_service: kube-logs
+      dd_source: fluent-bit
+      dd_tags: env:noos-prod
       dd_message_key: log
