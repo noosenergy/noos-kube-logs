@@ -10,7 +10,15 @@ function format_slack_msg(tag, ts, record)
     -- Build params as mrkdwn: "*key*: value" per line; angle-bracket URLs to ensure link
     local lines = {}
     if type(lo.params) == "table" then
-      for k, v in pairs(lo.params) do
+      -- Collect and sort keys for alphabetical ordering
+      local keys = {}
+      for k in pairs(lo.params) do keys[#keys+1] = k end
+      table.sort(keys)
+
+      -- Process params in sorted key order
+      for i = 1, #keys do
+        local k = keys[i]
+        local v = lo.params[k]
         local val = s(v)
         if type(v) == "string" and v:match("^https?://") then
           val = "<" .. val .. ">"
