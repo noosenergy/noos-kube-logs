@@ -3,5 +3,8 @@ kind: ConfigMap
 metadata:
   name: exporter-config
   namespace: {{ .Release.Namespace }}
+  annotations:
+    # Include deployTag to force ConfigMap update when chart is redeployed
+    deployTag: {{ .Values.exporter.deployTag }}
 data:
 {{ (.Files.Glob "files/*").AsConfig | nindent 2 }}
