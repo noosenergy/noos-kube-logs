@@ -61,8 +61,8 @@ pipeline:
     - name: throttle
       match: "healthcheck.*"
       rate: 1
-      window: 60
-      interval: 1s
+      window: 2
+      interval: 60s
 
   outputs:
     # Push kubernetes and services logs
