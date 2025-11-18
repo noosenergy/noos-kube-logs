@@ -53,16 +53,11 @@ pipeline:
       exclude:
         - $kubernetes['pod_name'] .*fluent-bit.*
 
-    - name: rewrite_tag
+    # Don't emit whitelisted logs
+    - name: grep
       match: "kubernetes.*"
-      rule: $log_object['path'] ^(/healthz/)$  healthcheck.$TAG false
-      emitter_name: re_emitted
-
-    - name: throttle
-      match: "healthcheck.*"
-      rate: 1
-      window: 2
-      interval: 60s
+      exclude:
+        - $log_object['whitelisted'] true
 
   outputs:
     # Push kubernetes and services logs
