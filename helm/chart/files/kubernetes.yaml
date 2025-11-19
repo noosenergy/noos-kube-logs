@@ -60,10 +60,9 @@ pipeline:
         - $log_object['whitelisted'] true
 
   outputs:
-    # Push kubernetes and services logs
-    # Push all logs to Datadog
+    # Push kubernetes and services logs to Datadog
     - name: datadog
-      match_regex: "(services..*)|(kubernetes..*)|(healthcheck..*)"
+      match_regex: "(kubernetes..*)|(services..*)"
       host: ${FLUENTBIT__DATADOG_HOST}
       tls: on
       compress: gzip
