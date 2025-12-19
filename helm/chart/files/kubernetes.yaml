@@ -31,9 +31,9 @@ pipeline:
       labels: on
       annotations: on
       # Refresh meta when Docker ID changes
-      cache_use_docker_id: on
+      # cache_use_docker_id: on
       # Activate kubelet API
-      use_kubelet: on
+      # use_kubelet: on
 
     # Remove some fields from the log record
     - name: record_modifier
