@@ -19,13 +19,21 @@ pipeline:
 
   filters:
     # Add kubernetes metadata
+    # https://docs.fluentbit.io/manual/data-pipeline/filters/kubernetes
     - name: kubernetes
       match: "kubernetes.*"
       # To precise given a custom tag
-      kube_tag_prefix: kubernetes.var.log.containers.
+      kube_tag_prefix: kubernetes.var.log.conta
+      # Remove the event log key after merging
       merge_log: on
       keep_log: off
-      labels: off
+      # Add pod labels and annotations
+      labels: on
+      annotations: on
+      # Refresh meta when Docker ID changes
+      cache_use_docker_id: on
+      # Activate kubelet API
+      use_kubelet: on
 
     # Remove some fields from the log record
     - name: record_modifier
