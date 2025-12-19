@@ -24,6 +24,6 @@ metadata:
   name: fluent-bit-exporter
 rules:
   - apiGroups: [""]
-    resources: ["pods", "namespaces"]
+    resources: ["namespaces", "pods", "nodes", "nodes/proxy"]
     verbs: ["get", "list", "watch"]
 {{- end }}

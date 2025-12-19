@@ -48,6 +48,10 @@ spec:
           configMap:
             name: exporter-config
 
+      # Allow DNS resolution for calling Kubelet locally
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+
       containers:
         - name: exporter
           image: "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
