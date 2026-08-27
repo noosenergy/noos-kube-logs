@@ -90,5 +90,5 @@ spec:
             successThreshold: 1
             failureThreshold: 6
             httpGet:
-              path: /api/v1/health
+              path: /api/v2/health
               port: 2020
