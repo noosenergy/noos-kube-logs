@@ -12,7 +12,7 @@ default:
 # ----------------
 
 orbs:
-  noos-ci: noosenergy/noos-ci@0.5.0
+  noos-ci: noosenergy/noos-ci@0.5.1
 
 # --------------
 # Pipeline tasks
